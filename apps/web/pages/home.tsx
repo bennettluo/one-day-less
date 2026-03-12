@@ -133,11 +133,11 @@ export default function HomePage() {
     <main className="flex min-h-screen flex-col bg-gradient-to-b from-black via-slate-950 to-black px-6 py-10 text-slate-100">
       <header className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-slate-900/80 ring-1 ring-emerald-500/40 shadow-sm shadow-emerald-500/20">
+          <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-slate-900/80 ring-1 ring-emerald-500/40 shadow-sm shadow-emerald-500/20">
             <img
               src="/one-day-less-logo.svg"
               alt="One Day Less logo"
-              className="h-5 w-5"
+              className="h-4 w-4"
             />
           </span>
           <h1 className="text-3xl font-semibold tracking-tight text-white md:text-4xl">
