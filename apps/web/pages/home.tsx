@@ -8,6 +8,13 @@ import {
 } from "../lib/storageClient";
 import { useI18n } from "../lib/i18nRuntime";
 
+type VisitStats = {
+  todayCount: number;
+  avgPerDay: number;
+  totalDays: number;
+  todayHourlyCounts: number[];
+};
+
 const pulseShapes = [
   {
     main:
@@ -240,7 +247,9 @@ export default function HomePage() {
     minutes: number;
     seconds: number;
   } | null>(null);
-  const [pulseIndex, setPulseIndex] = useState(0);
+  const [visitStats, setVisitStats] = useState<VisitStats | null>(null);
+  const [activePulseIndex, setActivePulseIndex] = useState(0);
+  const [prevPulseIndex, setPrevPulseIndex] = useState<number | null>(null);
   const { t } = useI18n();
 
   useEffect(() => {
@@ -275,6 +284,24 @@ export default function HomePage() {
 
       updateCountdown();
       const id = window.setInterval(updateCountdown, 1000);
+
+      const trackVisit = async () => {
+        try {
+          const response = await fetch("/api/visits/track", {
+            method: "POST"
+          });
+          if (!response.ok) {
+            return;
+          }
+          const data = (await response.json()) as VisitStats;
+          setVisitStats(data);
+        } catch {
+          // Swallow errors to avoid interrupting the main UX.
+        }
+      };
+
+      void trackVisit();
+
       return () => window.clearInterval(id);
     });
   }, [router]);
@@ -283,17 +310,18 @@ export default function HomePage() {
     if (typeof window === "undefined") return;
     const delay = 1000 + Math.random() * 9000;
     const id = window.setTimeout(() => {
-      setPulseIndex(prev => {
+      setActivePulseIndex(prev => {
         if (pulseShapes.length <= 1) return prev;
         let next = Math.floor(Math.random() * pulseShapes.length);
         if (next === prev) {
           next = (prev + 1) % pulseShapes.length;
         }
+        setPrevPulseIndex(prev);
         return next;
       });
     }, delay);
     return () => window.clearTimeout(id);
-  }, [pulseIndex]);
+  }, [activePulseIndex]);
 
   if (!config || !stats) {
     return (
@@ -310,6 +338,26 @@ export default function HomePage() {
     Math.max(0, Math.round(stats.percentLived * 100))
   );
   const daysLeftStr = stats.daysLeft.toString();
+
+  const isBelowAverage =
+    !!visitStats &&
+    visitStats.totalDays >= 3 &&
+    visitStats.avgPerDay > 0 &&
+    visitStats.todayCount < visitStats.avgPerDay;
+
+  const todayHourlyCounts = visitStats?.todayHourlyCounts ?? [];
+  const activeHours =
+    todayHourlyCounts.length === 24
+      ? todayHourlyCounts.filter(count => count > 0).length
+      : 0;
+
+  let pulseScaleX = 1;
+  if (activeHours > 0) {
+    const ratio = activeHours / 24;
+    const maxScale = 1.3;
+    const minScale = 0.7;
+    pulseScaleX = maxScale - ratio * (maxScale - minScale);
+  }
 
   return (
     <main className="flex min-h-screen flex-col bg-gradient-to-b from-black via-slate-950 to-black px-6 py-10 text-slate-100">
@@ -387,26 +435,56 @@ export default function HomePage() {
               <div className="mx-auto h-10 w-64 max-w-full">
                 <svg
                   viewBox="0 0 200 40"
-                  className="h-full w-full text-emerald-400/70"
+                  className={`h-full w-full ${
+                    isBelowAverage ? "text-emerald-400/30" : "text-emerald-400/70"
+                  }`}
+                  style={{
+                    transform: `scaleX(${pulseScaleX})`,
+                    transformOrigin: "center"
+                  }}
                 >
-                  <path
-                    className="pulse-line"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    d={pulseShapes[pulseIndex].main}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    className="pulse-line-soft"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1"
-                    d={pulseShapes[pulseIndex].soft}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
+                  {prevPulseIndex !== null && (
+                    <g className="transition-opacity duration-700 ease-out opacity-0">
+                      <path
+                        className="pulse-line"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        d={pulseShapes[prevPulseIndex].main}
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        className="pulse-line-soft"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1"
+                        d={pulseShapes[prevPulseIndex].soft}
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </g>
+                  )}
+                  <g className="transition-opacity duration-700 ease-out opacity-100">
+                    <path
+                      className="pulse-line"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      d={pulseShapes[activePulseIndex].main}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      className="pulse-line-soft"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1"
+                      d={pulseShapes[activePulseIndex].soft}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </g>
                 </svg>
               </div>
             </div>

@@ -1,0 +1,21 @@
+{
+  "dae8d78d-caa9-4e8c-aa90-2140b471a3b7": {
+    "daily": {
+      "2026-03-12": 1
+    },
+    "totalCount": 1,
+    "totalDays": 1
+  },
+  "3fec77fd-0cc7-4eda-9e78-0172fb312b4d": {
+    "daily": {
+      "2026-03-12": 24
+    },
+    "totalCount": 24,
+    "totalDays": 1,
+    "hourly": {
+      "2026-03-12": {
+        "22": 19
+      }
+    }
+  }
+}
