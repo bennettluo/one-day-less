@@ -1,5 +1,9 @@
 <h1>
-  <img src="apps/web/public/one-day-less-logo.svg" alt="One Day Less logo" height="28" style="vertical-align: middle; margin-right: 8px;" />
+  <img
+    src="apps/web/public/one-day-less-logo.svg"
+    alt="One Day Less logo"
+    style="height: 1em; vertical-align: -0.15em; margin-right: 0.35em;"
+  />
   One Day Less
 </h1>
 
@@ -9,7 +13,7 @@ Stop checking your bank balance. Start checking your life balance.
 
 **One Day Less** is a small reminder that every day you live is one day less in your lifetime balance. With a very minimal interface, large numbers, and a live countdown, the app shows you how many days you have already lived and how many days are left (based on your birthday and target age), nudging you to ask: *Did I really live this day well?*
 
-![One Day Less web home full page](apps/web/public/home-demo.png)
+![One Day Less web home full page](apps/web/public/one-day-less.png)
 
 ## Tech stack & architecture
 
