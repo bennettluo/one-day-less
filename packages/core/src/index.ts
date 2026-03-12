@@ -1,4 +1,8 @@
 export interface UserLifeConfig {
+  /** User's name, used for personalized display */
+  name?: string;
+  /** Where the user is from (city / country), used for copy and context */
+  origin?: string;
   birthDate: string | Date;
   targetAge: number;
   timeZone?: string;
@@ -15,13 +19,13 @@ export interface LifeStats {
 }
 
 export interface LifeReflectionAnswers {
-  /** 用户是否希望活到某个年龄（如 80 岁），可与 targetAge 对齐或做对比 */
+  /** Whether the user wants to live to a certain age (e.g. 80), can align with or contrast targetAge */
   desiredAge?: number;
-  /** 今天过得是否如意，自评分数 1-10 */
+  /** How satisfied today felt, self‑rated on a 1–10 scale */
   satisfactionScoreToday?: number;
-  /** 对现在生活状态的主观描述 */
+  /** Free‑form description of the current life state */
   currentFeelingText?: string;
-  /** 对未来想怎么过的自由描述 */
+  /** Free‑form description of how they want to live in the future */
   futureHopeText?: string;
 }
 
@@ -29,9 +33,9 @@ export interface ThirdPartyAppLink {
   id: string;
   label: string;
   description?: string;
-  /** 用于 H5 / Web 跳转的 URL */
+  /** URL used for H5 / Web navigation */
   url: string;
-  /** 可选的原生 / 小程序 Deep Link，用于 App / 小程序跳转 */
+  /** Optional native / mini‑program deep link for app / mini‑program navigation */
   deepLink?: string;
   provider?: string;
   category?: "mental_health" | "productivity" | "finance" | "relationship" | "other";
@@ -48,8 +52,9 @@ export interface ThirdPartySuggestionResult {
 }
 
 /**
- * 预留给第三方应用推荐的接口。
- * 未来可以在前端直接实现（本地跳转），也可以由后端实现（Cloudflare D1 / Workers）。
+ * Port reserved for third‑party app recommendations.
+ * In the future this can be implemented purely on the client (local navigation)
+ * or by a backend service (e.g. Cloudflare D1 / Workers).
  */
 export interface ThirdPartySuggestionPort {
   getSuggestions(

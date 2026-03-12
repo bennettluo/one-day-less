@@ -6,10 +6,12 @@ import {
   loadUserLifeConfigClient,
   saveUserLifeConfigClient
 } from "../lib/storageClient";
-import { LanguageToggle, useI18n } from "../lib/i18n";
+import { useI18n } from "../lib/i18nRuntime";
 
 export default function OnboardingPage() {
   const router = useRouter();
+  const [name, setName] = useState("");
+  const [origin, setOrigin] = useState("");
   const [birthDate, setBirthDate] = useState("");
   const [targetAge, setTargetAge] = useState("");
   const [error, setError] = useState<ValidationErrorCode | null>(null);
@@ -29,6 +31,8 @@ export default function OnboardingPage() {
 
     const targetAgeNumber = Number(targetAge);
     const config: UserLifeConfig = {
+      name: name.trim() || undefined,
+      origin: origin.trim() || undefined,
       birthDate,
       targetAge: targetAgeNumber
     };
@@ -83,13 +87,44 @@ export default function OnboardingPage() {
           <p className="text-xl text-slate-300 sm:text-2xl">
             {t("app.subtitle")}
           </p>
-          <div className="mt-2 flex justify-center">
-            <LanguageToggle />
-          </div>
         </header>
 
         <section className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow-xl shadow-black/40 backdrop-blur">
           <form className="space-y-6" onSubmit={handleSubmit}>
+            <div className="space-y-2">
+              <label
+                htmlFor="name"
+                className="block text-sm font-medium text-slate-200"
+              >
+                {t("onboarding.name.label")}
+              </label>
+              <input
+                id="name"
+                type="text"
+                value={name}
+                onChange={e => setName(e.target.value)}
+                className="block w-full rounded-lg border border-slate-700 bg-slate-900/80 px-3 py-2 text-sm text-white outline-none ring-0 transition hover:border-slate-500 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/40"
+                placeholder={t("onboarding.name.placeholder")}
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label
+                htmlFor="origin"
+                className="block text-sm font-medium text-slate-200"
+              >
+                {t("onboarding.origin.label")}
+              </label>
+              <input
+                id="origin"
+                type="text"
+                value={origin}
+                onChange={e => setOrigin(e.target.value)}
+                className="block w-full rounded-lg border border-slate-700 bg-slate-900/80 px-3 py-2 text-sm text-white outline-none ring-0 transition hover:border-slate-500 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/40"
+                placeholder={t("onboarding.origin.placeholder")}
+              />
+            </div>
             <div className="space-y-2">
               <label
                 htmlFor="birthDate"

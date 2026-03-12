@@ -1,9 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import type { UserLifeConfig, LifeStats } from "@one-day-less/core";
 import { calculateLifeStats } from "@one-day-less/core";
-import { loadUserLifeConfigClient } from "../lib/storageClient";
-import { LanguageToggle, useI18n } from "../lib/i18n";
+import {
+  loadUserLifeConfigClient,
+  resetUserLifeConfigClient
+} from "../lib/storageClient";
+import { useI18n } from "../lib/i18nRuntime";
 
 const pulseShapes = [
   {
@@ -31,7 +34,7 @@ function DigitReel({ digit }: { digit: number }) {
   const rowHeightRem = 2.5;
   return (
     <span
-      className="relative inline-block overflow-hidden align-middle"
+      className="relative inline-block overflow-hidden"
       style={{ height: `${rowHeightRem}rem` }}
     >
       <span
@@ -41,7 +44,7 @@ function DigitReel({ digit }: { digit: number }) {
         {Array.from({ length: 10 }).map((_, i) => (
           <span
             key={i}
-            className="block tabular-nums text-3xl font-semibold leading-none sm:text-4xl"
+            className="flex h-full items-center justify-center tabular-nums text-3xl font-semibold leading-none sm:text-4xl"
             style={{ height: `${rowHeightRem}rem` }}
           >
             {i}
@@ -49,6 +52,181 @@ function DigitReel({ digit }: { digit: number }) {
         ))}
       </span>
     </span>
+  );
+}
+
+const matchstickSegments = {
+  a: { x: 8, y: 4, w: 24, h: 4 },
+  b: { x: 30, y: 8, w: 4, h: 20 },
+  c: { x: 30, y: 32, w: 4, h: 24 },
+  d: { x: 8, y: 60, w: 24, h: 4 },
+  e: { x: 6, y: 32, w: 4, h: 24 },
+  f: { x: 6, y: 8, w: 4, h: 20 },
+  g: { x: 8, y: 32, w: 24, h: 4 }
+} as const;
+
+type MatchstickSegmentKey = keyof typeof matchstickSegments;
+
+const digitToMatchstickSegments: Record<number, MatchstickSegmentKey[]> = {
+  0: ["a", "b", "c", "d", "e", "f"],
+  1: ["b", "c"],
+  2: ["a", "b", "g", "e", "d"],
+  3: ["a", "b", "g", "c", "d"],
+  4: ["f", "g", "b", "c"],
+  5: ["a", "f", "g", "c", "d"],
+  6: ["a", "f", "g", "c", "d", "e"],
+  7: ["a", "b", "c"],
+  8: ["a", "b", "c", "d", "e", "f", "g"],
+  9: ["a", "b", "c", "d", "f", "g"]
+};
+
+function MatchstickDigit({ digit }: { digit: number }) {
+  const activeSegments =
+    digitToMatchstickSegments[((digit % 10) + 10) % 10] ?? [];
+  const keys = Object.keys(matchstickSegments) as MatchstickSegmentKey[];
+
+  return (
+    <svg
+      viewBox="0 0 40 64"
+      className="h-16 w-8 sm:h-20 sm:w-10"
+      aria-hidden="true"
+    >
+      {keys.map(key => {
+        const seg = matchstickSegments[key];
+        const on = activeSegments.includes(key);
+        return (
+          <rect
+            key={key}
+            x={seg.x}
+            y={seg.y}
+            width={seg.w}
+            height={seg.h}
+            rx={2}
+            className={on ? "fill-emerald-400" : "fill-slate-800"}
+            opacity={on ? 0.95 : 0.4}
+          />
+        );
+      })}
+    </svg>
+  );
+}
+
+function RunnerIcon() {
+  return (
+    <svg
+      viewBox="0 0 32 32"
+      className="h-4 w-4 md:h-5 md:w-5 text-emerald-200 drop-shadow-[0_0_4px_rgba(16,185,129,0.9)]"
+      aria-hidden="true"
+    >
+      <circle cx="18" cy="6" r="3" fill="currentColor" />
+      <path
+        d="M10 27l3-6 3 1 2 5M10 16l4-4 4 1 3-2M15 20l2-5"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function SettingsIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className="h-4 w-4 text-slate-200"
+      aria-hidden="true"
+    >
+      <path
+        d="M12 9.5A2.5 2.5 0 1 0 12 14.5 2.5 2.5 0 1 0 12 9.5Z"
+        fill="currentColor"
+      />
+      <path
+        d="M4.75 12.75C4.72 12.5 4.7 12.25 4.7 12s.02-.5.05-.75L3.2 10.3a.75.75 0 0 1-.15-.9l1.5-2.6a.75.75 0 0 1 .85-.35l1.8.55c.37-.26.78-.48 1.21-.64l.34-1.86A.75.75 0 0 1 10.5 4h3a.75.75 0 0 1 .74.6l.34 1.86c.43.16.84.38 1.21.64l1.8-.55a.75.75 0 0 1 .86.35l1.5 2.6a.75.75 0 0 1-.16.9l-1.55.95c.03.25.06.5.06.75s-.03.5-.06.75l1.55.95a.75.75 0 0 1 .16.9l-1.5 2.6a.75.75 0 0 1-.86.35l-1.8-.55a5 5 0 0 1-1.21.64l-.34 1.86a.75.75 0 0 1-.74.6h-3a.75.75 0 0 1-.74-.6l-.34-1.86a5 5 0 0 1-1.21-.64l-1.8.55a.75.75 0 0 1-.86-.35l-1.5-2.6a.75.75 0 0 1 .15-.9l1.55-.95Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+
+function RotateCcwIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className="h-3 w-3"
+      aria-hidden="true"
+    >
+      <path
+        d="M11 5V2L7 6l4 4V7c2.76 0 5 2.24 5 5a5 5 0 0 1-8.54 3.54l-1.42 1.42A7 7 0 0 0 18 12c0-3.87-3.13-7-7-7Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+
+function SettingsDropdown() {
+  const router = useRouter();
+  const { t } = useI18n();
+  const [open, setOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        containerRef.current &&
+        event.target instanceof Node &&
+        !containerRef.current.contains(event.target)
+      ) {
+        setOpen(false);
+      }
+    };
+
+    if (open) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [open]);
+
+  const handleReset = async () => {
+    const confirmed = window.confirm(t("settings.reset.confirm"));
+    if (!confirmed) return;
+    setOpen(false);
+    await resetUserLifeConfigClient();
+    router.push("/");
+  };
+
+  return (
+    <div ref={containerRef} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen(prev => !prev)}
+        className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-slate-700 bg-slate-900/60 text-slate-200 shadow-sm transition hover:border-emerald-500 hover:bg-slate-800"
+        aria-label={t("cta.settings")}
+      >
+        <SettingsIcon />
+      </button>
+      {open && (
+        <div className="absolute right-0 mt-2 w-56 rounded-xl border border-slate-800 bg-slate-900/95 p-3 text-xs text-slate-200 shadow-lg shadow-black/40 backdrop-blur">
+          <p className="mb-2 text-[11px] leading-relaxed text-slate-400">
+            {t("settings.reset.description")}
+          </p>
+          <button
+            type="button"
+            onClick={handleReset}
+            className="inline-flex w-full items-center justify-center gap-1 rounded-lg bg-rose-500/90 px-2.5 py-1.5 text-[11px] font-medium text-black shadow-sm shadow-rose-500/40 transition hover:bg-rose-400"
+          >
+          <RotateCcwIcon />
+            <span>{t("settings.reset.action")}</span>
+          </button>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -63,7 +241,7 @@ export default function HomePage() {
     seconds: number;
   } | null>(null);
   const [pulseIndex, setPulseIndex] = useState(0);
-  const { t, language } = useI18n();
+  const { t } = useI18n();
 
   useEffect(() => {
     loadUserLifeConfigClient().then(loaded => {
@@ -127,13 +305,17 @@ export default function HomePage() {
     );
   }
 
-  const percent = Math.min(100, Math.max(0, Math.round(stats.percentLived * 100)));
+  const percent = Math.min(
+    100,
+    Math.max(0, Math.round(stats.percentLived * 100))
+  );
+  const daysLeftStr = stats.daysLeft.toString();
 
   return (
     <main className="flex min-h-screen flex-col bg-gradient-to-b from-black via-slate-950 to-black px-6 py-10 text-slate-100">
       <header className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-slate-900/80 ring-1 ring-emerald-500/40 shadow-sm shadow-emerald-500/20">
+          <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-slate-900/80 ring-1 ring-emerald-500/40 shadow-sm shadow-emerald-500/20">
             <img
               src="/one-day-less-logo.svg"
               alt="One Day Less logo"
@@ -144,14 +326,8 @@ export default function HomePage() {
             {t("app.title")}
           </h1>
         </div>
-        <div className="flex items-center gap-2">
-          <LanguageToggle />
-          <button
-            onClick={() => router.push("/settings")}
-            className="rounded-full border border-slate-700 bg-slate-900/60 px-3 py-1 text-xs font-medium text-slate-200 hover:border-slate-500 hover:bg-slate-800"
-          >
-            {t("cta.settings")}
-          </button>
+        <div className="flex items-center gap-1">
+          <SettingsDropdown />
         </div>
       </header>
 
@@ -160,10 +336,23 @@ export default function HomePage() {
           <p className="text-sm uppercase tracking-[0.35em] text-slate-500 md:text-base">
             {t("home.section.title")}
           </p>
-          <p className="text-6xl font-semibold tracking-tight text-emerald-400 sm:text-7xl md:text-8xl">
-            {stats.daysLeft.toLocaleString()}
-            <span className="ml-3 align-middle text-3xl text-emerald-300/90 md:text-4xl">
-              {t("home.section.unit.day")}
+          <p className="text-5xl font-semibold tracking-tight text-emerald-400 sm:text-6xl md:text-7xl">
+            <span className="inline-flex items-end justify-center gap-1 font-extrabold sm:gap-1.5">
+              {daysLeftStr.split("").map((ch, index) =>
+                ch >= "0" && ch <= "9" ? (
+                  <MatchstickDigit key={index} digit={Number(ch)} />
+                ) : (
+                  <span
+                    key={index}
+                    className="px-1 text-4xl text-emerald-200/80 sm:text-5xl"
+                  >
+                    {ch}
+                  </span>
+                )
+              )}
+              <span className="ml-3 text-3xl text-emerald-300/90 md:text-4xl">
+                {t("home.section.unit.day")}
+              </span>
             </span>
           </p>
           {countdown && (
@@ -171,7 +360,7 @@ export default function HomePage() {
               <p className="text-[11px] uppercase tracking-[0.3em] text-emerald-500/80">
                 {t("home.countdown.caption")}
               </p>
-              <p className="heartbeat inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-4 py-2">
+              <p className="heartbeat flex h-10 items-center justify-center gap-1 px-4">
                 {(() => {
                   const h = countdown.hours.toString().padStart(2, "0");
                   const m = countdown.minutes.toString().padStart(2, "0");
@@ -180,12 +369,12 @@ export default function HomePage() {
                     <>
                       <DigitReel digit={Number(h[0])} />
                       <DigitReel digit={Number(h[1])} />
-                      <span className="flex items-center justify-center text-2xl sm:text-3xl">
+                      <span className="flex items-center justify-center text-2xl leading-none sm:text-3xl">
                         :
                       </span>
                       <DigitReel digit={Number(m[0])} />
                       <DigitReel digit={Number(m[1])} />
-                      <span className="flex items-center justify-center text-2xl sm:text-3xl">
+                      <span className="flex items-center justify-center text-2xl leading-none sm:text-3xl">
                         :
                       </span>
                       <DigitReel digit={Number(s[0])} />
@@ -223,48 +412,26 @@ export default function HomePage() {
             </div>
           )}
 
-          <div className="mx-auto mt-6 h-2 w-72 max-w-full overflow-hidden rounded-full bg-slate-800">
+          <div className="relative mx-auto mt-6 h-2 w-72 max-w-full rounded-full bg-slate-800">
             <div
               className="h-full rounded-full bg-emerald-500 transition-all"
               style={{ width: `${percent}%` }}
             />
+            <div
+              className="pointer-events-none absolute inset-y-0 flex items-center transition-all"
+              style={{
+                left: `${percent}%`,
+                transform: "translateX(-50%)"
+              }}
+            >
+              <RunnerIcon />
+            </div>
           </div>
           <p className="text-sm text-slate-300 md:text-base">
-            {language === "zh-CN" ? (
-              <>
-                你已经走过{" "}
-                <span className="text-emerald-400">
-                  <span className="text-base font-semibold md:text-lg">
-                    {stats.daysLived.toLocaleString()}
-                  </span>{" "}
-                  天
-                </span>
-                ，约占一生的{" "}
-                <span className="text-emerald-400">
-                  <span className="text-base font-semibold md:text-lg">
-                    {percent}%
-                  </span>
-                </span>
-                。
-              </>
-            ) : (
-              <>
-                You have already lived{" "}
-                <span className="text-emerald-400">
-                  <span className="text-base font-semibold md:text-lg">
-                    {stats.daysLived.toLocaleString()}
-                  </span>{" "}
-                  days
-                </span>
-                , about{" "}
-                <span className="text-emerald-400">
-                  <span className="text-base font-semibold md:text-lg">
-                    {percent}%
-                  </span>
-                </span>{" "}
-                of your life.
-              </>
-            )}
+            {t("home.progress.text", {
+              days: stats.daysLived.toLocaleString(),
+              percent
+            })}
           </p>
         </div>
       </section>

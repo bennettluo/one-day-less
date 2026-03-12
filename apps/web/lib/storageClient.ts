@@ -19,3 +19,13 @@ export async function saveUserLifeConfigClient(
   await storage.saveUserLifeConfig(config);
 }
 
+export async function resetUserLifeConfigClient(): Promise<void> {
+  if (typeof window === "undefined") return;
+  await new Promise<void>((resolve, reject) => {
+    const request = window.indexedDB.deleteDatabase("one-day-less");
+    request.onsuccess = () => resolve();
+    request.onerror = () => reject(request.error ?? new Error("IndexedDB error"));
+    request.onblocked = () => resolve();
+  });
+}
+

@@ -6,7 +6,7 @@ import {
   loadUserLifeConfigClient,
   saveUserLifeConfigClient
 } from "../lib/storageClient";
-import { LanguageToggle, useI18n } from "../lib/i18n";
+import { useI18n } from "../lib/i18nRuntime";
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -104,9 +104,6 @@ export default function SettingsPage() {
         <h1 className="text-2xl font-medium text-white md:text-3xl">
           {t("settings.title")}
         </h1>
-        <div className="flex w-10 justify-end">
-          <LanguageToggle />
-        </div>
       </header>
 
       <section className="mt-8 mx-auto w-full max-w-md rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow-xl shadow-black/40 backdrop-blur">

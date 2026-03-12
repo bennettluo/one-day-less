@@ -87,6 +87,9 @@ importers:
       '@one-day-less/storage':
         specifier: workspace:*
         version: link:../../packages/storage
+      lucide-react:
+        specifier: ^0.577.0
+        version: 0.577.0(react@18.3.1)
       next:
         specifier: ^14.2.0
         version: 14.2.0(@babel/core@7.29.0)(@playwright/test@1.46.0)(react-dom@18.3.0)(react@18.3.1)
@@ -126,7 +129,7 @@ importers:
         version: link:../../packages/storage
       '@tarojs/components':
         specifier: 4.0.0
-        version: 4.0.0(@tarojs/helper@4.0.0)(@tarojs/shared@4.0.0)(@types/react@18.3.0)(postcss@8.4.0)(react@18.3.1)
+        version: 4.0.0(@tarojs/helper@4.0.0)(@tarojs/shared@4.0.0)(@types/react@18.3.0)(postcss@8.5.8)(react@18.3.1)
       '@tarojs/helper':
         specifier: 4.0.0
         version: 4.0.0
@@ -141,7 +144,7 @@ importers:
         version: 4.0.0
       '@tarojs/taro':
         specifier: 4.0.0
-        version: 4.0.0(@tarojs/components@4.0.0)(@tarojs/helper@4.0.0)(@tarojs/shared@4.0.0)(@types/react@18.3.0)(postcss@8.4.0)
+        version: 4.0.0(@tarojs/components@4.0.0)(@tarojs/helper@4.0.0)(@tarojs/shared@4.0.0)(@types/react@18.3.0)(postcss@8.5.8)
       react:
         specifier: ^18.3.0
         version: 18.3.1
@@ -2159,7 +2162,7 @@ packages:
 
   /@expo/bunyan@4.0.1:
     resolution: {integrity: sha512-+Lla7nYSiHZirgK+U/uYzsLv/X+HaJienbD5AKX1UQZHYfWaP+9uuQluRB4GrEVWF0GZ7vEVp/jzaOT9k/SQlg==}
-    engines: {node: '>=0.10.0'}
+    engines: {'0': node >=0.10.0}
     dependencies:
       uuid: 8.3.2
     dev: false
@@ -4009,7 +4012,7 @@ packages:
       - supports-color
     dev: true
 
-  /@tarojs/components-advanced@4.0.0(@tarojs/helper@4.0.0)(@tarojs/runtime@4.0.0)(@tarojs/shared@4.0.0)(@tarojs/taro@4.0.0)(@types/react@18.3.0)(postcss@8.4.0)(react@18.3.1):
+  /@tarojs/components-advanced@4.0.0(@tarojs/helper@4.0.0)(@tarojs/runtime@4.0.0)(@tarojs/shared@4.0.0)(@tarojs/taro@4.0.0)(@types/react@18.3.0)(postcss@8.5.8)(react@18.3.1):
     resolution: {integrity: sha512-j1vAbUK7LFbG+NS7xoEVgI7sLjBC9d4YDvxT8tL1YO6BW+k2Tv45zyCW+g4cYMmB901Zj2fK3ag/68Kvmxqjig==}
     peerDependencies:
       '@tarojs/runtime': ~4.0.0
@@ -4023,10 +4026,10 @@ packages:
       vue:
         optional: true
     dependencies:
-      '@tarojs/components': 4.0.0(@tarojs/helper@4.0.0)(@tarojs/shared@4.0.0)(@types/react@18.3.0)(postcss@8.4.0)(react@18.3.1)
+      '@tarojs/components': 4.0.0(@tarojs/helper@4.0.0)(@tarojs/shared@4.0.0)(@types/react@18.3.0)(postcss@8.5.8)(react@18.3.1)
       '@tarojs/runtime': 4.0.0
       '@tarojs/shared': 4.0.0
-      '@tarojs/taro': 4.0.0(@tarojs/components@4.0.0)(@tarojs/helper@4.0.0)(@tarojs/shared@4.0.0)(@types/react@18.3.0)(postcss@8.4.0)
+      '@tarojs/taro': 4.0.0(@tarojs/components@4.0.0)(@tarojs/helper@4.0.0)(@tarojs/shared@4.0.0)(@types/react@18.3.0)(postcss@8.5.8)
       classnames: 2.5.1
       csstype: 3.2.3
       memoize-one: 6.0.0
@@ -4043,7 +4046,7 @@ packages:
       - webpack-dev-server
     dev: false
 
-  /@tarojs/components@4.0.0(@tarojs/helper@4.0.0)(@tarojs/shared@4.0.0)(@types/react@18.3.0)(postcss@8.4.0)(react@18.3.1):
+  /@tarojs/components@4.0.0(@tarojs/helper@4.0.0)(@tarojs/shared@4.0.0)(@types/react@18.3.0)(postcss@8.5.8)(react@18.3.1):
     resolution: {integrity: sha512-Ve4MAB2LU/VTKROU23M1R8ga0zH1sqkaUafTpTc1QDKlZyhKKNme2DQxjuMmLMgl1EvQEnJIvLkxMhX+4rknpA==}
     engines: {node: '>= 18'}
     peerDependencies:
@@ -4056,9 +4059,9 @@ packages:
         optional: true
     dependencies:
       '@stencil/core': 2.22.3
-      '@tarojs/components-advanced': 4.0.0(@tarojs/helper@4.0.0)(@tarojs/runtime@4.0.0)(@tarojs/shared@4.0.0)(@tarojs/taro@4.0.0)(@types/react@18.3.0)(postcss@8.4.0)(react@18.3.1)
+      '@tarojs/components-advanced': 4.0.0(@tarojs/helper@4.0.0)(@tarojs/runtime@4.0.0)(@tarojs/shared@4.0.0)(@tarojs/taro@4.0.0)(@types/react@18.3.0)(postcss@8.5.8)(react@18.3.1)
       '@tarojs/runtime': 4.0.0
-      '@tarojs/taro': 4.0.0(@tarojs/components@4.0.0)(@tarojs/helper@4.0.0)(@tarojs/shared@4.0.0)(@types/react@18.3.0)(postcss@8.4.0)
+      '@tarojs/taro': 4.0.0(@tarojs/components@4.0.0)(@tarojs/helper@4.0.0)(@tarojs/shared@4.0.0)(@types/react@18.3.0)(postcss@8.5.8)
       '@types/react': 18.3.0
       classnames: 2.5.1
       hammerjs: 2.0.8
@@ -4280,7 +4283,7 @@ packages:
     resolution: {integrity: sha512-4ApnDdpI/K24v9xsCOv1DfbIoXrtk4lMJF4ryAhzaEpHL8s2AwqyD7bUuYJ2ulmzqL/bwRCqvi4xNsSPeJsYMg==}
     engines: {node: '>= 18'}
 
-  /@tarojs/taro@4.0.0(@tarojs/components@4.0.0)(@tarojs/helper@4.0.0)(@tarojs/shared@4.0.0)(@types/react@18.3.0)(postcss@8.4.0):
+  /@tarojs/taro@4.0.0(@tarojs/components@4.0.0)(@tarojs/helper@4.0.0)(@tarojs/shared@4.0.0)(@types/react@18.3.0)(postcss@8.5.8):
     resolution: {integrity: sha512-89b71kXf7zuWCjSELUFCqdiAMDLNNYVH9QLmwC6PX5DMihZyaoSf/dC6rJHoFbQFmzQykjFwpm+lPHlzJj+WvA==}
     engines: {node: '>= 18'}
     peerDependencies:
@@ -4312,13 +4315,13 @@ packages:
         optional: true
     dependencies:
       '@tarojs/api': 4.0.0(@tarojs/runtime@4.0.0)(@tarojs/shared@4.0.0)
-      '@tarojs/components': 4.0.0(@tarojs/helper@4.0.0)(@tarojs/shared@4.0.0)(@types/react@18.3.0)(postcss@8.4.0)(react@18.3.1)
+      '@tarojs/components': 4.0.0(@tarojs/helper@4.0.0)(@tarojs/shared@4.0.0)(@types/react@18.3.0)(postcss@8.5.8)(react@18.3.1)
       '@tarojs/helper': 4.0.0
       '@tarojs/runtime': 4.0.0
       '@tarojs/shared': 4.0.0
       '@types/postcss-url': 10.0.4
       '@types/react': 18.3.0
-      postcss: 8.4.0
+      postcss: 8.5.8
     dev: false
 
   /@types/archy@0.0.31:
@@ -8488,6 +8491,14 @@ packages:
       yallist: 4.0.0
     dev: false
 
+  /lucide-react@0.577.0(react@18.3.1):
+    resolution: {integrity: sha512-4LjoFv2eEPwYDPg/CUdBJQSDfPyzXCRrVW1X7jrx/trgxnxkHFjnVZINbzvzxjN70dxychOfg+FTYwBiS3pQ5A==}
+    peerDependencies:
+      react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    dependencies:
+      react: 18.3.1
+    dev: false
+
   /make-dir@1.3.0:
     resolution: {integrity: sha512-2w31R7SJtieJJnQtGc7RVL2StM2vGYVfqUOvUDxH6bC6aJTxPxTF0GnIgCyu7tjockiUWAYQRbxa7vKn34s5sQ==}
     engines: {node: '>=4'}
@@ -9625,7 +9636,6 @@ packages:
       nanoid: 3.3.11
       picocolors: 1.1.1
       source-map-js: 1.2.1
-    dev: true
 
   /prelude-ls@1.2.1:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}
