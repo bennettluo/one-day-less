@@ -150,13 +150,11 @@ export default function SettingsPage() {
               </button>
               <input
                 id="targetAge"
-                type="number"
-                min={1}
-                max={120}
-                step={1}
+                type="text"
                 inputMode="numeric"
+                pattern="[0-9]*"
                 value={targetAge}
-                onChange={e => setTargetAge(e.target.value)}
+                onChange={e => setTargetAge(e.target.value.replace(/[^0-9]/g, ""))}
                 className="min-w-0 flex-1 bg-transparent px-3 py-2 text-center outline-none ring-0"
                 required
               />

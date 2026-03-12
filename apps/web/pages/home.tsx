@@ -26,6 +26,32 @@ const pulseShapes = [
   }
 ];
 
+function DigitReel({ digit }: { digit: number }) {
+  const clamped = ((digit % 10) + 10) % 10;
+  const rowHeightRem = 2.5;
+  return (
+    <span
+      className="relative inline-block overflow-hidden align-middle"
+      style={{ height: `${rowHeightRem}rem` }}
+    >
+      <span
+        className="block transition-transform duration-300 ease-out"
+        style={{ transform: `translateY(-${clamped * rowHeightRem}rem)` }}
+      >
+        {Array.from({ length: 10 }).map((_, i) => (
+          <span
+            key={i}
+            className="block tabular-nums text-3xl font-semibold leading-none sm:text-4xl"
+            style={{ height: `${rowHeightRem}rem` }}
+          >
+            {i}
+          </span>
+        ))}
+      </span>
+    </span>
+  );
+}
+
 export default function HomePage() {
   const router = useRouter();
   const [config, setConfig] = useState<UserLifeConfig | null>(null);
@@ -37,7 +63,7 @@ export default function HomePage() {
     seconds: number;
   } | null>(null);
   const [pulseIndex, setPulseIndex] = useState(0);
-  const { t } = useI18n();
+  const { t, language } = useI18n();
 
   useEffect(() => {
     loadUserLifeConfigClient().then(loaded => {
@@ -106,13 +132,17 @@ export default function HomePage() {
   return (
     <main className="flex min-h-screen flex-col bg-gradient-to-b from-black via-slate-950 to-black px-6 py-10 text-slate-100">
       <header className="flex items-center justify-between">
-        <div>
+        <div className="flex items-center gap-3">
+          <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-slate-900/80 ring-1 ring-emerald-500/40 shadow-sm shadow-emerald-500/20">
+            <img
+              src="/one-day-less-logo.svg"
+              alt="One Day Less logo"
+              className="h-5 w-5"
+            />
+          </span>
           <h1 className="text-3xl font-semibold tracking-tight text-white md:text-4xl">
             {t("app.title")}
           </h1>
-          <p className="text-xl text-slate-300 md:text-2xl">
-            {t("home.header.subtitle")}
-          </p>
         </div>
         <div className="flex items-center gap-2">
           <LanguageToggle />
@@ -142,48 +172,27 @@ export default function HomePage() {
                 {t("home.countdown.caption")}
               </p>
               <p className="heartbeat inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-4 py-2">
-                {countdown.hours
-                  .toString()
-                  .padStart(2, "0")
-                  .split("")
-                  .map((digit, idx) => (
-                    <span
-                      key={`h-${idx}-${digit}`}
-                      className="flip-digit tabular-nums text-3xl font-semibold tracking-[0.15em] sm:text-4xl"
-                    >
-                      {digit}
-                    </span>
-                  ))}
-                <span className="flex items-center justify-center text-2xl sm:text-3xl">
-                  :
-                </span>
-                {countdown.minutes
-                  .toString()
-                  .padStart(2, "0")
-                  .split("")
-                  .map((digit, idx) => (
-                    <span
-                      key={`m-${idx}-${digit}`}
-                      className="flip-digit tabular-nums text-3xl font-semibold tracking-[0.15em] sm:text-4xl"
-                    >
-                      {digit}
-                    </span>
-                  ))}
-                <span className="flex items-center justify-center text-2xl sm:text-3xl">
-                  :
-                </span>
-                {countdown.seconds
-                  .toString()
-                  .padStart(2, "0")
-                  .split("")
-                  .map((digit, idx) => (
-                    <span
-                      key={`s-${idx}-${digit}`}
-                      className="flip-digit tabular-nums text-3xl font-semibold tracking-[0.15em] sm:text-4xl"
-                    >
-                      {digit}
-                    </span>
-                  ))}
+                {(() => {
+                  const h = countdown.hours.toString().padStart(2, "0");
+                  const m = countdown.minutes.toString().padStart(2, "0");
+                  const s = countdown.seconds.toString().padStart(2, "0");
+                  return (
+                    <>
+                      <DigitReel digit={Number(h[0])} />
+                      <DigitReel digit={Number(h[1])} />
+                      <span className="flex items-center justify-center text-2xl sm:text-3xl">
+                        :
+                      </span>
+                      <DigitReel digit={Number(m[0])} />
+                      <DigitReel digit={Number(m[1])} />
+                      <span className="flex items-center justify-center text-2xl sm:text-3xl">
+                        :
+                      </span>
+                      <DigitReel digit={Number(s[0])} />
+                      <DigitReel digit={Number(s[1])} />
+                    </>
+                  );
+                })()}
               </p>
 
               <div className="mx-auto h-10 w-64 max-w-full">
@@ -220,11 +229,42 @@ export default function HomePage() {
               style={{ width: `${percent}%` }}
             />
           </div>
-          <p className="text-xs text-slate-400">
-            {t("home.progress.text", {
-              days: stats.daysLived.toLocaleString(),
-              percent
-            })}
+          <p className="text-sm text-slate-300 md:text-base">
+            {language === "zh-CN" ? (
+              <>
+                你已经走过{" "}
+                <span className="text-emerald-400">
+                  <span className="text-base font-semibold md:text-lg">
+                    {stats.daysLived.toLocaleString()}
+                  </span>{" "}
+                  天
+                </span>
+                ，约占一生的{" "}
+                <span className="text-emerald-400">
+                  <span className="text-base font-semibold md:text-lg">
+                    {percent}%
+                  </span>
+                </span>
+                。
+              </>
+            ) : (
+              <>
+                You have already lived{" "}
+                <span className="text-emerald-400">
+                  <span className="text-base font-semibold md:text-lg">
+                    {stats.daysLived.toLocaleString()}
+                  </span>{" "}
+                  days
+                </span>
+                , about{" "}
+                <span className="text-emerald-400">
+                  <span className="text-base font-semibold md:text-lg">
+                    {percent}%
+                  </span>
+                </span>{" "}
+                of your life.
+              </>
+            )}
           </p>
         </div>
       </section>
