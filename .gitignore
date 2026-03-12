@@ -1,0 +1,30 @@
+node_modules
+.DS_Store
+
+# Turbo / build caches
+.turbo
+
+# Next.js
+.next
+out
+
+# Vite / generic build output
+dist
+build
+
+# Expo / React Native
+.expo
+.expo-shared
+
+# Taro / WeChat Mini Program
+apps/wechat-mp/dist
+
+# Test outputs
+coverage
+playwright-report
+test-results
+
+# Env / local config (keep out of git)
+.env
+.env.local
+.env.*.local

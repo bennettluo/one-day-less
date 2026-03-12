@@ -1,0 +1,27 @@
+{
+  "name": "wechat-mp",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "taro dev --type weapp",
+    "build": "taro build --type weapp"
+  },
+  "dependencies": {
+    "@one-day-less/core": "workspace:*",
+    "@one-day-less/storage": "workspace:*",
+    "@tarojs/components": "4.0.0",
+    "@tarojs/helper": "4.0.0",
+    "@tarojs/plugin-platform-weapp": "4.0.0",
+    "@tarojs/react": "4.0.0",
+    "@tarojs/runtime": "4.0.0",
+    "@tarojs/taro": "4.0.0",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0"
+  },
+  "devDependencies": {
+    "@tarojs/cli": "4.0.0",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "typescript": "^5.6.0"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "name": "one-day-less",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@9.0.0",
+  "scripts": {
+    "dev:web": "turbo dev --filter=web",
+    "dev:extension": "turbo dev --filter=extension",
+    "dev:mobile": "turbo dev --filter=mobile",
+    "dev:wechat-mp": "turbo dev --filter=wechat-mp",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "test": "turbo test",
+    "test:unit": "jest",
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.46.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.2.0",
+    "turbo": "^2.0.0",
+    "typescript": "^5.6.0"
+  }
+}
